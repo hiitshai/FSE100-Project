@@ -23,6 +23,17 @@ def main():
             if dist < minimum:
                 minimum = dist
                 index = i
+        '''
+        minimum = float('inf')
+        index = 0
+        for i in range(9): 
+            dist = distList[i]
+            print(dist)
+            if dist < minimum:
+                    minimum = dist
+                    index = i
+        '''
+                    
         colorName = ""
         if index == 0:
             colorName = "red"
