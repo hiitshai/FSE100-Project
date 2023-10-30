@@ -14,26 +14,15 @@ def main():
         colorList = [(255,0,0),(255,128,0),(255,255,0),(0,255,0),(0,0,255),(127,0,255),(255,0,255),(0,0,0),(255,255,255)]
         distList = []
         for col in colorList:
-            distList.append(math.sqrt((col[0] - color[0])**2 + (col[1] - color[1])**2 + (col[2] - color[2])**2))
-        minimum = 0
-        index = 0
-        for i in range(9): 
-            dist = distList[i]
-            print(dist)
-            if dist < minimum:
-                minimum = dist
-                index = i
-        '''
+            distList.append(math.sqrt(((col[0] - color[0])*0.30)**2 + ((col[1] - color[1])*0.59)**2 + ((col[2] - color[2])*0.11)**2))
         minimum = float('inf')
         index = 0
         for i in range(9): 
             dist = distList[i]
             print(dist)
             if dist < minimum:
-                    minimum = dist
-                    index = i
-        '''
-                    
+                minimum = dist
+                index = i    
         colorName = ""
         if index == 0:
             colorName = "red"
