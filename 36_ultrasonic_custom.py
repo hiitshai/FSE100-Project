@@ -58,7 +58,7 @@ def buttonpress(x):
     elif x == 1 and turnoff == 1:
         turnoff = 0
 # main loop for sensor input and output
-def loop():
+def colorLoop():
     global redWeight, blueWeight, greenWeight
     while True:
         if turnoff == 1:
@@ -91,6 +91,13 @@ def loop():
                 colorName = "violet"
             elif index == 7:
                 colorName = "white"
+            time.sleep(2)
+            speak(colorName)
+        elif turnoff == 0:
+            time.sleep(0.1)
+def ultraLoop():
+    while True:
+        if turnoff == 1:
             dis = distance()
             if dis >= 150:
                 time.sleep(1.25)
@@ -133,6 +140,7 @@ def destroy():
 if __name__ == "__main__":
     setup()
     try:
-        loop()
+        colorLoop()
+        ultraLoop()
     except KeyboardInterrupt:
         destroy()
