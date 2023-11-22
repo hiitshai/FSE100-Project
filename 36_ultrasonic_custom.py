@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import RPi.GPIO as GPIO
 import time
 import board
@@ -5,7 +6,7 @@ import adafruit_tcs34725
 import subprocess
 import speech_recognition as sr
 import math
-# variables to represent physical pin location
+# variables and constants
 TRIG = 17
 ECHO = 13
 SIG = 27
@@ -42,79 +43,85 @@ def distance():
     time2 = time.time()
     during = time2 - time1
     return during * 340 / 2 * 100
+# detects when there is input from button
 def detect(chn):
     buttonpress(GPIO.input(BSIG))
+# speaks color using tts
 def speak(text):
     text = text.replace(" ", "_")
     subprocess.run(("espeak \"" + text + " 2>/dev/null").split(" "))
+# action that happens on button press
 def buttonpress(x):
     global turnoff
     if x == 1 and turnoff == 0:
         turnoff = 1
     elif x == 1 and turnoff == 1:
         turnoff = 0
+# main loop for sensor input and output
 def loop():
     global redWeight, blueWeight, greenWeight
     while True:
-        color = sensor.color_rgb_bytes
-        colorList = [(255,0,0),(255,128,0),(255,255,0),(0,255,0),(0,0,255),(127,0,255),(255,0,255),(255,255,255)]
-        distList = []
-        for col in colorList:
-            distList.append(math.sqrt(((col[0] - color[0])*redWeight)**2 + ((col[1] - color[1])*greenWeight)**2 + ((col[2] - color[2])*blueWeight)**2))
-        minimum = float('inf')
-        index = 0
-        for i in range(8): 
-            dist = distList[i]
-            if dist < minimum:
-                minimum = dist
-                index = i
-        colorName = ""
-        if index == 0:
-            colorName = "red"
-        elif index == 1:
-            colorName = "orange"
-        elif index == 2:
-            colorName = "yellow"
-        elif index == 3:
-            colorName = "green"
-        elif index == 4:
-            colorName = "blue"
-        elif index == 5:
-            colorName = "indigo"
-        elif index == 6:
-            colorName = "violet"
-        elif index == 7:
-            colorName = "white"
-        speak(colorName)
-        time.sleep(1.0)
         if turnoff == 1:
+            color = sensor.color_rgb_bytes
+            colorList = [(255,0,0),(255,128,0),(255,255,0),(0,255,0),(0,0,255),(127,0,255),(255,0,255),(255,255,255)]
+            distList = []
+            for col in colorList:
+              distList.append(math.sqrt(((col[0] - color[0])*redWeight)**2 + ((col[1] - color[1])*greenWeight)**2 + ((col[2] - color[2])*blueWeight)**2))
+            minimum = float('inf')
+            index = 0
+            for i in range(8): 
+                dist = distList[i]
+                if dist < minimum:
+                    minimum = dist
+                    index = i
+            colorName = ""
+            if index == 0:
+              colorName = "red"
+            elif index == 1:
+                colorName = "orange"
+            elif index == 2:
+                colorName = "yellow"
+            elif index == 3:
+                colorName = "green"
+            elif index == 4:
+                colorName = "blue"
+            elif index == 5:
+                colorName = "indigo"
+            elif index == 6:
+                colorName = "violet"
+            elif index == 7:
+                colorName = "white"
             dis = distance()
-            time.sleep(1)
-            if dis >= 100:
-                buzzer.start(50)
-                time.sleep(.3)
+            if dis >= 150:
+                time.sleep(1.25)
+                buzzer.start(10)
+                time.sleep(.1)
                 buzzer.stop()
-            elif dis >= 75 and dis < 100:
-                for num in range(2):
-                    buzzer.start(50)
-                    time.sleep(.3)
-                    buzzer.stop()
-            elif dis >= 50 and dis < 75:
-                for num in range(3):
-                    buzzer.start(50)
-                    time.sleep(.3)
-                    buzzer.stop()
-            elif dis >= 25 and dis < 50:
-                for num in range(4):
-                    buzzer.start(50)
-                    time.sleep(.3)
-                    buzzer.stop()
-            elif dis >= 1 and dis < 25:
-                for num in range(5):
-                    buzzer.start(50)
-                    time.sleep(.3)
-                    buzzer.stop()
-                    
+            elif dis >= 120 and dis < 150:
+                time.sleep(1)
+                buzzer.start(10)
+                time.sleep(.1)
+                buzzer.stop()
+            elif dis >= 90 and dis < 120:
+                time.sleep(.75)
+                buzzer.start(10)
+                time.sleep(.1)
+                buzzer.stop()
+            elif dis >= 60 and dis < 90:
+                time.sleep(.5)
+                buzzer.start(10)
+                time.sleep(.1)
+                buzzer.stop()
+            elif dis >= 30 and dis < 60:
+                time.sleep(.25)
+                buzzer.start(10)
+                time.sleep(.1)
+                buzzer.stop()
+            elif dis >= 0 and dis < 30:
+                time.sleep(.07)
+                buzzer.start(10)
+                time.sleep(.1)
+                buzzer.stop()
             else:
                 print("too far")
         elif turnoff == 0:
